@@ -1,0 +1,15 @@
+C:\Koulu\Github\C#\Olio\olio\Ovienum\obj\Debug\net6.0\Ovienum.csproj.AssemblyReference.cache
+C:\Koulu\Github\C#\Olio\olio\Ovienum\obj\Debug\net6.0\Ovienum.GeneratedMSBuildEditorConfig.editorconfig
+C:\Koulu\Github\C#\Olio\olio\Ovienum\obj\Debug\net6.0\Ovienum.AssemblyInfoInputs.cache
+C:\Koulu\Github\C#\Olio\olio\Ovienum\obj\Debug\net6.0\Ovienum.AssemblyInfo.cs
+C:\Koulu\Github\C#\Olio\olio\Ovienum\obj\Debug\net6.0\Ovienum.csproj.CoreCompileInputs.cache
+C:\Koulu\Github\C#\Olio\olio\Ovienum\bin\Debug\net6.0\Ovienum.exe
+C:\Koulu\Github\C#\Olio\olio\Ovienum\bin\Debug\net6.0\Ovienum.deps.json
+C:\Koulu\Github\C#\Olio\olio\Ovienum\bin\Debug\net6.0\Ovienum.runtimeconfig.json
+C:\Koulu\Github\C#\Olio\olio\Ovienum\bin\Debug\net6.0\Ovienum.dll
+C:\Koulu\Github\C#\Olio\olio\Ovienum\bin\Debug\net6.0\Ovienum.pdb
+C:\Koulu\Github\C#\Olio\olio\Ovienum\obj\Debug\net6.0\Ovienum.dll
+C:\Koulu\Github\C#\Olio\olio\Ovienum\obj\Debug\net6.0\refint\Ovienum.dll
+C:\Koulu\Github\C#\Olio\olio\Ovienum\obj\Debug\net6.0\Ovienum.pdb
+C:\Koulu\Github\C#\Olio\olio\Ovienum\obj\Debug\net6.0\Ovienum.genruntimeconfig.cache
+C:\Koulu\Github\C#\Olio\olio\Ovienum\obj\Debug\net6.0\ref\Ovienum.dll
