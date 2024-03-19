@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "ov4+Xr/bujxv7RdX9U/IfGl0ylvgtJcp/luY9JFW6uY93XALqxtaKcaV3Aq2JdbXhaR3LvS7coD3VT3JRUwZcw==",
+  "success": true,
+  "projectFilePath": "C:\\Koulu\\Github\\C#\\Olio\\olio\\ravintola\\ConsoleApp1\\ConsoleApp1.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.27\\microsoft.netcore.app.host.win-x64.6.0.27.nupkg.sha512",
+    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.27\\microsoft.aspnetcore.app.ref.6.0.27.nupkg.sha512",
+    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.27\\microsoft.windowsdesktop.app.ref.6.0.27.nupkg.sha512",
+    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.27\\microsoft.netcore.app.ref.6.0.27.nupkg.sha512"
+  ],
+  "logs": []
+}
