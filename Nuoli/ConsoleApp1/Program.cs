@@ -116,21 +116,25 @@ namespace ConsoleApp1
             public double Hinta
             {
                 get { return hinta; }
+                set { hinta = value; }
             }
 
             public paa Paa
             {
                 get { return paa; }
+                set { paa = value; }
             }
 
             public hoyhen Hoyhen
             {
                 get { return hoyhen; }
+                set { hoyhen = value; }
             }
 
             public int Pituus
             {
                 get { return pituus; }
+                set { pituus = value; }
             }
 
             public nuoli(string paa, string hoyhen, int pituus)
