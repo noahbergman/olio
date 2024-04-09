@@ -103,7 +103,7 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             nuoli valmis = new nuoli(kasaus1(), kasaus2(), kasaus3());
-            Console.WriteLine("Tämän nuolen hinta on " + valmis.hinta + " kultaa");
+            Console.WriteLine("Tämän nuolen hinta on " + valmis.Hinta + " kultaa");
         }
 
         public class nuoli
@@ -111,7 +111,27 @@ namespace ConsoleApp1
             private paa paa;
             private hoyhen hoyhen;
             private int pituus;
-            public double hinta = 0;
+            private double hinta = 0;
+
+            public double Hinta
+            {
+                get { return hinta; }
+            }
+
+            public paa Paa
+            {
+                get { return paa; }
+            }
+
+            public hoyhen Hoyhen
+            {
+                get { return hoyhen; }
+            }
+
+            public int Pituus
+            {
+                get { return pituus; }
+            }
 
             public nuoli(string paa, string hoyhen, int pituus)
             {
