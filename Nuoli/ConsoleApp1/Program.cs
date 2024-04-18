@@ -99,11 +99,10 @@ namespace ConsoleApp1
             }
         }
 
-
         static void Main(string[] args)
         {
-            nuoli valmis = new nuoli(kasaus1(), kasaus2(), kasaus3());
-            Console.WriteLine("Tämän nuolen hinta on " + valmis.Hinta + " kultaa");
+            nuoli lol = new nuoli("", "", 100).valinta();
+            Console.WriteLine("Tämän nuolen hinta on " + lol.Hinta + " kultaa");
         }
 
         public class nuoli
@@ -142,6 +141,78 @@ namespace ConsoleApp1
                 AsetaPaa(paa);
                 AsetaHoyhen(hoyhen);
                 AsetaPituus(pituus);
+            }
+
+            public nuoli valinta()
+            {
+                bool check = false;
+                nuoli palautus = new nuoli("","",100);
+
+                Console.WriteLine("Valitse nuoli: ");
+                Console.WriteLine("");
+                Console.WriteLine("1. Eliittinuoli (Timanttikärki, 100cm varsi, kotkansulka)");
+                Console.WriteLine("2. Perusnuoli (Teräskärki, 85cm varsi, kanansulka)");
+                Console.WriteLine("3. Aloittelijanuoli (Puukärki, 70cm varsi, lehti)");
+                Console.WriteLine("4. Rakenna omasi");
+
+                while (true)
+                {
+                    int x;
+                    string vastaus = Console.ReadLine();
+
+                    if (Int32.TryParse(vastaus, out x))
+                    {
+                        if (x == 1)
+                        {
+                            check = true;
+                            palautus = nuoli.Eliittinuoli();
+                        }
+
+                        if (x == 2)
+                        {
+                            check = true;
+                            palautus = nuoli.Perusnuoli();
+                        }
+
+                        if (x == 3)
+                        {
+                            check = true;
+                            palautus = nuoli.Perusnuoli();
+                        }
+
+                        if (x == 4)
+                        {
+                            check = true;
+                            palautus = new nuoli(kasaus1(), kasaus2(), kasaus3());
+                        }
+                    }
+
+                    if (check)
+                    {
+                        return palautus;
+                        break;
+                    }
+
+                    Console.WriteLine("Valitse annetuista vaihtoehdoista, kirjoita pelkkä numero");
+                }
+            }
+
+            public static nuoli Eliittinuoli()
+            {
+                nuoli Eliittinuoli = new nuoli("timantti", "kotka", 100);
+                return Eliittinuoli;
+            }
+
+            public static nuoli Perusnuoli()
+            {
+                nuoli Perusnuoli = new nuoli("teräs", "kana", 85);
+                return Perusnuoli;
+            }
+
+            public static nuoli Aloittelijanuoli()
+            {
+                nuoli Aloittelijanuoli = new nuoli("puu", "lehti", 70);
+                return Aloittelijanuoli;
             }
 
             public void AsetaPaa(string paa)
