@@ -1,0 +1,4 @@
+D:\Unity\Unity Hub\olio\ruoka\ruoka\obj\Debug\net6.0\ruoka.GeneratedMSBuildEditorConfig.editorconfig
+D:\Unity\Unity Hub\olio\ruoka\ruoka\obj\Debug\net6.0\ruoka.AssemblyInfoInputs.cache
+D:\Unity\Unity Hub\olio\ruoka\ruoka\obj\Debug\net6.0\ruoka.AssemblyInfo.cs
+D:\Unity\Unity Hub\olio\ruoka\ruoka\obj\Debug\net6.0\ruoka.csproj.CoreCompileInputs.cache
