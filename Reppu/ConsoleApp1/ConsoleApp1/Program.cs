@@ -5,6 +5,7 @@
         static void Main(string[] args)
         {
             reppu lol = new reppu(30, 20, 10);
+
             lol.yeeah();
         }
 
@@ -12,6 +13,13 @@
         {
             protected double paino;
             protected double tilavuus;
+
+            public override string ToString()
+            {
+                string eh = base.ToString();
+                eh = eh.Remove(0,14);
+                return eh;
+            }
 
             public double Paino
             {
@@ -50,19 +58,43 @@
             static miekka Miekka = new miekka();
             private tavara[] reff = { Nuoli, Jousi, Köysi, Vesi, Ruokaannos, Miekka };
 
+            private string sisällä()
+            {
+                string e = "";
+
+                if (sisältö.Length == 0)
+                {
+                    e = "Reppu on tyhjä";
+                }
+
+                else
+                {
+                    for (int i = 0; i < sisältö.Length; i++)
+                    {
+                        e += sisältö[i].ToString() + ", ";
+                    }
+
+                    e = e.Remove(e.Length - 2, 1);
+                    e = "Repussa on: " + e;
+                }
+
+                return e;
+            }
+
             public reppu(double maxPaino, double maxTilavuus, int maxTavarat)
             {
                 this.maxPaino = maxPaino;
                 this.maxTilavuus = maxTilavuus;
                 this.maxTavarat = maxTavarat;
 
-                sisältö = new tavara[maxTavarat];
+                sisältö = new tavara[0];
             }
 
             public void yeeah()
             {
                 while (currentTavarat < maxTavarat)
                 {
+                    Console.WriteLine(sisällä());
                     Console.WriteLine($"Repussa on tällä hetkellä {currentTavarat}/{maxTavarat} tavaraa, {currentPaino}/{maxPaino} painoa, ja {currentTilavuus}/{maxTilavuus} tilaa");
                     Console.WriteLine("Mitä haluat lisätä?");
                     Console.WriteLine("1. Nuoli");
