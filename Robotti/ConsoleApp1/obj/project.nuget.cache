@@ -1,13 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VZIy0OzEOqphn8Cv4udXw25ff6A5Lj3fnPGVcoQAgJd3pqTXtLRLtBflgWScRSYc8kjuncfeBbV9uI/ZUO+3oQ==",
+  "dgSpecHash": "JzXdyfxQWDIH1OsESkb/evW+jhNZXipZErC3f7TXIuM9OfG0HETAtNqkEdzbZrWDopu8vL6r5I/VnR6kC/SLgw==",
   "success": true,
-  "projectFilePath": "C:\\Koulu\\Github\\C#\\Olio\\olio\\Robotti\\ConsoleApp1\\ConsoleApp1.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.29\\microsoft.netcore.app.host.win-x64.6.0.29.nupkg.sha512",
-    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.29\\microsoft.aspnetcore.app.ref.6.0.29.nupkg.sha512",
-    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.29\\microsoft.windowsdesktop.app.ref.6.0.29.nupkg.sha512",
-    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.29\\microsoft.netcore.app.ref.6.0.29.nupkg.sha512"
-  ],
+  "projectFilePath": "D:\\Unity\\Unity Hub\\olio\\Robotti\\ConsoleApp1\\ConsoleApp1.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }
