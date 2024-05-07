@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VZIy0OzEOqphn8Cv4udXw25ff6A5Lj3fnPGVcoQAgJd3pqTXtLRLtBflgWScRSYc8kjuncfeBbV9uI/ZUO+3oQ==",
+  "dgSpecHash": "q9yOh0vuu3nFSG3jGD1HIGWj8emo98akO4rlaY6Ky+gxcI3tFXTW/GKHojGj1XZMxpDP6dffkKR6mCwonFnTdA==",
   "success": true,
-  "projectFilePath": "C:\\Koulu\\Github\\C#\\Olio\\olio\\Robotti\\ConsoleApp1\\ConsoleApp1.csproj",
+  "projectFilePath": "C:\\Koulu\\Github\\C#\\Olio\\olio\\Värit\\ConsoleApp1\\ConsoleApp1.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.29\\microsoft.netcore.app.host.win-x64.6.0.29.nupkg.sha512",
     "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.29\\microsoft.aspnetcore.app.ref.6.0.29.nupkg.sha512",

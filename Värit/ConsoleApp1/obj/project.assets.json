@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Koulu\\Github\\C#\\Olio\\olio\\Robotti\\ConsoleApp1\\ConsoleApp1.csproj",
+      "projectUniqueName": "C:\\Koulu\\Github\\C#\\Olio\\olio\\Värit\\ConsoleApp1\\ConsoleApp1.csproj",
       "projectName": "ConsoleApp1",
-      "projectPath": "C:\\Koulu\\Github\\C#\\Olio\\olio\\Robotti\\ConsoleApp1\\ConsoleApp1.csproj",
+      "projectPath": "C:\\Koulu\\Github\\C#\\Olio\\olio\\Värit\\ConsoleApp1\\ConsoleApp1.csproj",
       "packagesPath": "C:\\Users\\s2100947\\.nuget\\packages\\",
-      "outputPath": "C:\\Koulu\\Github\\C#\\Olio\\olio\\Robotti\\ConsoleApp1\\obj\\",
+      "outputPath": "C:\\Koulu\\Github\\C#\\Olio\\olio\\Värit\\ConsoleApp1\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\s2100947\\AppData\\Roaming\\NuGet\\NuGet.Config",
