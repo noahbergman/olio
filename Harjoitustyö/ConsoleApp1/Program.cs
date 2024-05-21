@@ -6,12 +6,15 @@ namespace ConsoleApp1
     internal class Program
     {
         static void Main(string[] args)
-        {            
+        {
             Pelaaja test = new Pelaaja(1, "test");
             Console.WriteLine(test.xpn.Length);
             test.Taistelu(new Lima());
             Console.WriteLine(test.xpn.Length);
         }
+
+        enum slot { paa, keho, housut, kengät, hanskat, misc, ase, consumable }
+        enum damagetype { blunt, slash, pierce, magic }
 
         public class Pelaaja
         {
@@ -24,6 +27,20 @@ namespace ConsoleApp1
             protected int xp = 6;
             protected int gold = 0;
             protected string nimi;
+            Random random = new Random();
+
+            static slot[] slots = new slot[]
+            {
+                slot.paa,
+                slot.keho,
+                slot.housut,
+                slot.kengät,
+                slot.hanskat,
+                slot.misc,
+                slot.ase
+            };
+            Equip[] loadout = new Equip[slots.Length];
+            Esine[] inventory = new Esine[20];
 
             public int HP
             {
@@ -127,6 +144,7 @@ namespace ConsoleApp1
                                 break;
 
                             case "4":
+                                pakene();
                                 break;
                         }
                     }
@@ -138,22 +156,22 @@ namespace ConsoleApp1
                 {
                     if (spd > vihollinen.SPD)
                     {
-                        currentHPV -= str - vihollinen.DEF;
+                        Hyökkäys();
 
                         tarkistahäviö();
 
-                        currentHP -= vihollinen.STR - def;
+                        VHyökkäys();
 
                         tarkistahäviö();
                     }
 
                     else if (spd < vihollinen.SPD)
                     {
-                        currentHP -= vihollinen.STR - def;
+                        VHyökkäys();
 
                         tarkistahäviö();
 
-                        currentHPV -= str - vihollinen.DEF;
+                        Hyökkäys();
 
                         tarkistahäviö();
                     }
@@ -220,6 +238,54 @@ namespace ConsoleApp1
                     }
                 }
 
+                // arpoo pakenemisen nopeuden ja tuurin perusteella // 
+
+                void pakene()
+                {
+                    int x = random.Next(1, 7) * spd;
+                    int y = random.Next(1, 7) * vihollinen.SPD;
+
+                    if (x > y)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Pakenit Onnistuneesti");
+                        Console.WriteLine();
+                        Console.WriteLine();
+                        Console.WriteLine();
+                        Console.WriteLine("Paina mitätahansa nappia jatkaaksesi");
+                        Console.ReadKey();
+                    }
+
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine($"{x} {y}");
+                        Console.WriteLine("Pakeneminen epäonnistui, käytit vuorosi ja vihollinen hyökkäsi sinuun");
+                        Console.WriteLine();
+                        Console.WriteLine();
+                        Console.WriteLine();
+                        Console.WriteLine("Paina mitätahansa nappia jatkaaksesi");
+                        Console.ReadKey();
+
+                        VHyökkäys();
+
+                        tarkistahäviö();
+                        valinta();
+                    }
+                }
+
+                // hyökkäykset //
+
+                void Hyökkäys()
+                {
+                    currentHPV -= str;
+                }
+
+                void VHyökkäys()
+                {
+                    currentHP -= vihollinen.STR;
+                }
+
                 valinta();
             }
 
@@ -233,7 +299,7 @@ namespace ConsoleApp1
                     Console.WriteLine($"XP: {xp}/{xpn[level]} -> {xp + vihxp - xpn[level]}/{xpn[level + 1]}");
                     Console.WriteLine();
                     Console.WriteLine($"HP: {hp} -> {hp + 3}");
-                    Console.WriteLine($"Strenght: {str} -> {str + 2}");
+                    Console.WriteLine($"Strength: {str} -> {str + 2}");
                     Console.WriteLine($"Defense: {def} -> {def + 1}");
                     Console.WriteLine($"Speed: {spd} -> {spd + 1}");
                     Console.WriteLine();
@@ -318,7 +384,7 @@ namespace ConsoleApp1
                 this.spd = spd;
                 this.xp = xp;
                 this.nimi = nimi;
-                this.gold = random.Next(goldmin, goldmax+1);
+                this.gold = random.Next(goldmin, goldmax + 1);
             }
         }
 
@@ -367,7 +433,7 @@ namespace ConsoleApp1
 
         public class Esine
         {
-
+            slot slot;
         }
 
         public class Equip : Esine
