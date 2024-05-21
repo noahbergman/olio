@@ -13,8 +13,8 @@ namespace ConsoleApp1
             Console.WriteLine(test.xpn.Length);
         }
 
-        enum slot { paa, keho, housut, kengät, hanskat, misc, ase, consumable }
-        enum damagetype { blunt, slash, pierce, magic }
+        public enum Slot { paa, keho, housut, kengät, hanskat, misc, ase, consumable }
+        public enum Damagetype { blunt, slash, pierce, magic }
 
         public class Pelaaja
         {
@@ -29,15 +29,15 @@ namespace ConsoleApp1
             protected string nimi;
             Random random = new Random();
 
-            static slot[] slots = new slot[]
+            static Slot[] slots = new Slot[]
             {
-                slot.paa,
-                slot.keho,
-                slot.housut,
-                slot.kengät,
-                slot.hanskat,
-                slot.misc,
-                slot.ase
+                Slot.paa,
+                Slot.keho,
+                Slot.housut,
+                Slot.kengät,
+                Slot.hanskat,
+                Slot.misc,
+                Slot.ase
             };
             Equip[] loadout = new Equip[slots.Length];
             Esine[] inventory = new Esine[20];
@@ -433,12 +433,21 @@ namespace ConsoleApp1
 
         public class Esine
         {
-            slot slot;
+
         }
 
         public class Equip : Esine
         {
+            Slot slot;
+            Damagetype damagetype;
+            protected int str;
+            protected int def;
+            protected int hp;
 
+            public Equip(Slot slot)
+            {
+                this.slot = slot;
+            }
         }
 
         public class Consumable : Esine
