@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using static ConsoleApp1.Program;
 
 namespace ConsoleApp1
 {
@@ -14,7 +15,7 @@ namespace ConsoleApp1
         }
 
         public enum Slot { paa, keho, housut, kengät, hanskat, misc, ase, consumable }
-        public enum Damagetype { blunt, slash, pierce, magic }
+        public enum Damagetype { blunt, slash, pierce, magic , na }
 
         public class Pelaaja
         {
@@ -25,7 +26,7 @@ namespace ConsoleApp1
             protected int spd = 10;
             protected int level = 1;
             protected int xp = 6;
-            protected int gold = 0;
+            protected int gold = 3;
             protected string nimi;
             Random random = new Random();
 
@@ -114,6 +115,7 @@ namespace ConsoleApp1
                 int currentHPV = vihollinen.HP;
                 bool voitto = false;
                 bool taistelu = false;
+                int turn = 1;
 
                 Console.WriteLine("sasdasd");
 
@@ -123,7 +125,7 @@ namespace ConsoleApp1
                     if (taistelu == false)
                     {
                         Console.Clear();
-                        Console.WriteLine($"{nimi}: {currentHP}/{hp}        {vihollinen.NIMI}: {currentHPV}/{vihollinen.HP}");
+                        Console.WriteLine($"Turn {turn}.   {nimi}: {currentHP}/{hp}        {vihollinen.NIMI}: {currentHPV}/{vihollinen.HP}");
                         Console.WriteLine();
                         Console.WriteLine("1. Hyökkää");
                         Console.WriteLine("2. Reppu");
@@ -154,6 +156,7 @@ namespace ConsoleApp1
 
                 void hyökkää()
                 {
+                    turn++;
                     if (spd > vihollinen.SPD)
                     {
                         Hyökkäys();
@@ -193,7 +196,10 @@ namespace ConsoleApp1
                     Console.WriteLine($"Defense: {vihollinen.DEF}");
                     Console.WriteLine($"Speed: {vihollinen.SPD}");
                     Console.WriteLine();
-                    Console.WriteLine(vihollinen.desc());
+                    for ( int i = 0; i < vihollinen.DESC.Length; i++)
+                    {
+                        Console.WriteLine(vihollinen.DESC[i]);
+                    }
                     Console.WriteLine();
                     Console.WriteLine("Paina mitätahansa nappia jatkaaksesi");
                     Console.ReadKey();
@@ -242,6 +248,7 @@ namespace ConsoleApp1
 
                 void pakene()
                 {
+                    turn++;
                     int x = random.Next(1, 7) * spd;
                     int y = random.Next(1, 7) * vihollinen.SPD;
 
@@ -329,11 +336,10 @@ namespace ConsoleApp1
             protected int xp;
             protected int gold;
             protected string nimi;
+            protected Damagetype heikkous;
+            protected Damagetype kestää;
             Random random = new Random();
-            protected internal virtual string desc()
-            {
-                return "placeholder";
-            }
+            protected internal string[] desc = new string[4];
 
             public int HP
             {
@@ -376,7 +382,13 @@ namespace ConsoleApp1
                 set { nimi = value; }
             }
 
-            public Vihollinen(int hp, int str, int def, int spd, int xp, string nimi, int goldmin, int goldmax)
+            public string[] DESC
+            {
+                get { return desc; }
+                set {  desc = value; }
+            }
+
+            public Vihollinen(int hp, int str, int def, int spd, int xp, string nimi, int goldmin, int goldmax, Damagetype heikkous, Damagetype kestää)
             {
                 this.hp = hp;
                 this.str = str;
@@ -385,6 +397,8 @@ namespace ConsoleApp1
                 this.xp = xp;
                 this.nimi = nimi;
                 this.gold = random.Next(goldmin, goldmax + 1);
+                this.heikkous = heikkous;
+                this.kestää = kestää;
             }
         }
 
@@ -392,49 +406,62 @@ namespace ConsoleApp1
 
         public class Lima : Vihollinen
         {
-            public Lima() : base(10, 2, 0, 4, 5, "Lima", 10, 20) { }
-
-            protected internal override string desc()
+            public Lima() : base(10, 2, 0, 4, 5, "Lima", 10, 20, Damagetype.slash, Damagetype.blunt)
             {
-                return "Perus lima, heikko terille mutta kestää tylppiä aseita";
+                desc = new string[]
+                {
+                    "Placeholder",
+                    "",
+                    $"Heikkous: {heikkous}",
+                    $"Kestää: {kestää}"
+                };
             }
         }
 
         public class Peikko : Vihollinen
         {
-            public Peikko() : base(15, 4, 2, 7, 15, "Peikko", 15, 30) { }
-
-            protected internal override string desc()
+            public Peikko() : base(15, 4, 2, 7, 15, "Peikko", 15, 30, Damagetype.na, Damagetype.na)
             {
-                return "Peikot ovat heikkoja ja tyhmiä, ei erikoiskykyjä";
+                string[] desc = new string[]
+                {
+                    "Placeholder",
+                    "",
+                    $"Heikkous: {heikkous}",
+                    $"Kestää: {kestää}"
+                };
             }
         }
 
         public class Rosvo : Vihollinen
         {
-            public Rosvo() : base(20, 8, 5, 25, 40, "Rosvo", 100, 150) { }
-
-            protected internal override string desc()
+            public Rosvo() : base(20, 8, 5, 25, 40, "Rosvo", 100, 150, Damagetype.na, Damagetype.na)
             {
-                return "Rosvot ovat nopeita ja saattavat varastaa rahaa hyökätessään";
+                string[] desc = new string[]
+                {
+                    "Placeholder",
+                    "",
+                    $"Heikkous: {heikkous}",
+                    $"Kestää: {kestää}"
+                };
             }
         }
 
         public class Lohikäärme : Vihollinen
         {
-            public Lohikäärme() : base(100, 40, 30, 70, 1000, "Lohikäärme", 2000, 4000) { }
-
-            protected internal override string desc()
+            public Lohikäärme() : base(100, 40, 30, 70, 1000, "Lohikäärme", 2000, 4000, Damagetype.na, Damagetype.na)
             {
-                return "Pakene.";
+                string[] desc = new string[]
+                {
+                    "Placeholder",
+                    "",
+                    $"Heikkous: {heikkous}",
+                    $"Kestää: {kestää}"
+                };
             }
         }
 
 
-        public class Esine
-        {
-
-        }
+        public class Esine { }
 
         public class Equip : Esine
         {
@@ -443,21 +470,89 @@ namespace ConsoleApp1
             protected int str;
             protected int def;
             protected int hp;
+            protected string nimi;
 
-            public Equip(Slot slot)
+            public Equip(Slot slot, Damagetype damagetype, int str, string nimi, int hinta)
             {
                 this.slot = slot;
+                this.damagetype = damagetype;
+                this.str = str;
+                this.nimi = nimi;
+            }
+
+            public Equip(int def, int hp, string nimi)
+            {
+                this.def = def;
+                this.hp = hp;
+                this.nimi = nimi;
             }
         }
 
-        public class Consumable : Esine
+        public class Dagger : Equip
         {
+            public Dagger() : base(Slot.ase, Damagetype.pierce, 0, "Tikari") { }
+        }
 
+        public class Bow : Equip
+        {
+            public Bow() : base(Slot.ase, Damagetype.pierce, 6, "Jousipyssy") { }
+        }
+
+        public abstract class Consumable : Esine
+        {
+            protected string nimi;
+
+            public Consumable(string nimi)
+            {
+                this.nimi = nimi;
+            }
+
+            public abstract void use(Pelaaja pelaaja, int current, Vihollinen vihollinen, int vihollinenHP);
+        }
+
+        public class Potion : Consumable
+        {
+            int healing = 10;
+
+            public Potion() : base("Parannus juoma") { }
+
+            public override void use(Pelaaja pelaaja, int current, Vihollinen vihollinen, int vihollinenHP)
+            {
+                if (current + healing <= pelaaja.HP)
+                {
+                    current += healing;
+                }
+
+                else if (pelaaja.HP - current > 0)
+                {
+                    current += pelaaja.HP - current;
+                }
+            }          
         }
 
         public class Kauppa
         {
+            public void kauppa(Pelaaja pelaaja)
+            {
+                void valinta()
+                {
+                    Console.WriteLine("Mitä haluaisit tehdä?");
+                    Console.WriteLine();
+                    Console.WriteLine("1. Osta");
+                    Console.WriteLine("2. Myy");
+                    Console.WriteLine("3. Poistu");
 
+                    string valitse = Console.ReadLine();
+
+                    switch (valitse)
+                    {
+                        case "1":
+                            break;
+                    }
+                }
+
+
+            }
         }
     }
 }
