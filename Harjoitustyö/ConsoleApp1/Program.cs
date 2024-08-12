@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using static ConsoleApp1.Program;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace ConsoleApp1
 {
@@ -8,18 +9,182 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            Pelaaja test = new Pelaaja(1, "test");
-            Console.WriteLine(test.xpn.Length);
-            test.Taistelu(new Lima());
-            Console.WriteLine(test.xpn.Length);
+            Pelaaja pelaaja = new Pelaaja(1, "test");
+
+            pelaaja.inventory.Add(new Potion());
+            pelaaja.inventory.Add(new Potion());
+            pelaaja.inventory.Add(new Potion());
+            pelaaja.inventory.Add(new Potion());
+
+            hub(pelaaja);
         }
 
-        public enum Slot { paa, keho, housut, kengät, hanskat, misc, ase, consumable }
+        static public void hub(Pelaaja pelaaja)
+        {
+            hubMain();
+
+            void hubMain()
+            {
+                Console.Clear();
+
+                Console.WriteLine("Mitä haluat tehdä?");
+                Console.WriteLine();
+                Console.WriteLine("1. Taistelu");
+                Console.WriteLine("2. Kauppa");
+                Console.WriteLine("3. Status");
+                Console.WriteLine("4. Varusteet");
+                Console.WriteLine();
+                int input = tarkistaVastaus(1, 4, Console.ReadLine());
+
+                switch (input)
+                {
+                    case 1:
+                        taisteluValinta();
+                        break;
+
+                    case 2:
+                        Kauppa.kauppa(pelaaja);
+                        break;
+
+                    case 3:
+                        status();
+                        break;
+
+                    case 4:
+                        break;
+                }
+            }
+
+            void taisteluValinta()
+            {
+                Console.Clear();
+
+                Console.WriteLine("Mitä vastaan haluat taistella?");
+                Console.WriteLine();
+                Console.WriteLine("1. Lima");
+                Console.WriteLine("2. Peikko");
+                Console.WriteLine("3. Rosvo");
+                Console.WriteLine("4. Lohikäärme");
+                Console.WriteLine("0. Takaisin");
+                int input = tarkistaVastaus(0, 4, Console.ReadLine());
+
+                switch (input)
+                {
+                    case 1:
+                        pelaaja.Taistelu(new Lima(), pelaaja);
+                        break;
+
+                    case 2:
+                        pelaaja.Taistelu(new Peikko(), pelaaja);
+                        break;
+
+                    case 3:
+                        pelaaja.Taistelu(new Rosvo(), pelaaja);
+                        break;
+
+                    case 4:
+                        pelaaja.Taistelu(new Lohikäärme(), pelaaja);
+                        break;
+
+                    case 0:
+                        hubMain();
+                        break;
+                }
+            }
+
+            void status()
+            {
+                Console.Clear();
+
+                Console.WriteLine($"{pelaaja.NIMI}");
+                Console.WriteLine();
+                Console.WriteLine($"Level: {pelaaja.LEVEL}");
+                Console.WriteLine($"XP: {pelaaja.XP}/{pelaaja.xpn[pelaaja.LEVEL]}");
+                Console.WriteLine();
+                Console.WriteLine($"HP: {pelaaja.HP}");
+                Console.WriteLine($"Strength: {pelaaja.STR}");
+                Console.WriteLine($"Defense: {pelaaja.DEF}");
+                Console.WriteLine($"Speed: {pelaaja.SPD}");
+                Console.WriteLine();
+                Console.WriteLine($"Kulta: {pelaaja.GOLD}");
+                Console.WriteLine();
+
+                Console.WriteLine("Paina mitätahansa nappia jatkaaksesi");
+                Console.ReadKey();
+                hubMain();
+            }
+
+            void equip1()
+            {
+                Console.Clear();
+
+                Console.WriteLine("1. Pää");
+                Console.WriteLine("2. Keho");
+                Console.WriteLine("3. Housut");
+                Console.WriteLine("4. Ase");
+                Console.WriteLine("5. Takaisin");
+
+                int input = tarkistaVastaus(1, 5, Console.ReadLine());
+
+                switch (input)
+                {
+                    case 1:
+                        break;
+
+                    case 2:
+                        break;
+
+                    case 3:
+                        break;
+
+                    case 4:
+                        break;
+
+                    case 5:
+                        break;
+                }
+            }
+
+            void equip2(Slot slot)
+            {
+                foreach (Esine l9 in pelaaja.inventory)
+                {
+                    if (l9.slot == slot)
+                    {
+
+                    }
+                }
+            }
+        }
+
+        public static int tarkistaVastaus(int min, int max, string vastaus)
+        {
+            int x = 0;
+
+            while (true)
+            {
+                bool check = int.TryParse(vastaus, out int vastausInt);
+
+                if (check)
+                {
+                    if (vastausInt <= max && vastausInt >= min)
+                    {
+                        x = vastausInt;
+                        break;
+                    }
+                }
+
+                Console.WriteLine("Valitse numero");
+                vastaus = Console.ReadLine();
+            }
+            return x;
+        }
+
+        public enum Slot { paa, keho, housut, ase, consumable }
         public enum Damagetype { blunt, slash, pierce, magic , na }
 
         public class Pelaaja
         {
-            // level 1 stats, hp on max hp eikä nykyinen //
             protected int hp = 10;
             protected int str = 4;
             protected int def = 0;
@@ -28,6 +193,9 @@ namespace ConsoleApp1
             protected int xp = 6;
             protected int gold = 3;
             protected string nimi;
+            protected int invcapacity = 20;
+            public int currentHP;
+            public int currentHPV;
             Random random = new Random();
 
             static Slot[] slots = new Slot[]
@@ -35,13 +203,31 @@ namespace ConsoleApp1
                 Slot.paa,
                 Slot.keho,
                 Slot.housut,
-                Slot.kengät,
-                Slot.hanskat,
-                Slot.misc,
                 Slot.ase
             };
             Equip[] loadout = new Equip[slots.Length];
-            Esine[] inventory = new Esine[20];
+            public List<Esine> inventory = new List<Esine>();
+
+            public bool checkSpace(List<Esine> inv, Esine x, int capacity)
+            {
+                if (inventory.Count < capacity)
+                {
+                    inv.Add(x);
+                    return true;
+                }
+
+                else
+                {
+                    return false;
+                }
+            }
+
+            public void myy(Esine x)
+            {
+                GOLD += x.myyntihinta;
+                inventory.Remove(x);
+            }
+
 
             public int HP
             {
@@ -91,6 +277,12 @@ namespace ConsoleApp1
                 set { nimi = value; }
             }
 
+            public int INVCAPACITY
+            {
+                get { return invcapacity; }
+                set {  invcapacity = value; }
+            }
+
             // tarvittava xp per level //
             public int[] xpn = new int[100];
 
@@ -109,15 +301,14 @@ namespace ConsoleApp1
                 }
             }
 
-            public void Taistelu(Vihollinen vihollinen)
+            public void Taistelu(Vihollinen vihollinen, Pelaaja pelaaja)
             {
-                int currentHP = hp;
-                int currentHPV = vihollinen.HP;
+                currentHP = hp;
+                currentHPV = vihollinen.HP;
                 bool voitto = false;
+                bool häviö = false;
                 bool taistelu = false;
                 int turn = 1;
-
-                Console.WriteLine("sasdasd");
 
                 // valitset mitä teet //
                 void valinta()
@@ -133,23 +324,86 @@ namespace ConsoleApp1
                         Console.WriteLine("4. Pakene");
                         Console.WriteLine();
 
-                        string valitse = Console.ReadLine();
+                        int input = tarkistaVastaus(1, 4, Console.ReadLine());
 
-                        switch (valitse)
+                        switch (input)
                         {
-                            case "1":
+                            case 1:
                                 hyökkää();
                                 break;
 
-                            case "3":
+                            case 2:
+                                reppu();
+                                break;
+
+                            case 3:
                                 tarkista();
                                 break;
 
-                            case "4":
+                            case 4:
                                 pakene();
                                 break;
                         }
                     }
+                }
+
+                void reppu()
+                {
+                    Console.Clear();
+
+                    int z = 1;
+                    List<int> xIndex = new List<int>();
+                    List<Consumable> tempConsumable = new List<Consumable>();
+
+                    if (inventory.Count == 0)
+                    {
+                        Console.WriteLine("Reppu on tyhjä");
+                        Console.WriteLine();
+                    }                    
+
+                    else
+                    {
+                        foreach (Consumable x in inventory)
+                        {
+                            Console.WriteLine($"{z}. {x.nimi}");
+
+                            tempConsumable.Add(x);
+
+                            xIndex.Add(inventory.IndexOf(x));
+
+                            z++;
+                        }
+
+                        string x2 = $"1-{z}";
+
+                        if (z == 1)
+                        {
+                            x2 = "1";
+                        }
+
+                        Console.WriteLine();
+                        Console.WriteLine($"0. Takaisin               {x2}. Esine");
+                        Console.WriteLine();
+                        int input = tarkistaVastaus(1, z, Console.ReadLine());
+
+                        if (input == 0)
+                        {
+                            valinta();
+                        }
+
+                        else
+                        {
+                            tempConsumable[input - 1].use(pelaaja, vihollinen);
+                            inventory.RemoveAt(xIndex[input-1]);
+
+                            // Pelaaja pelaaja, int current, Vihollinen vihollinen, int vihollinenHP
+                        }
+                    }
+
+                    Console.WriteLine("Paina mitätahansa nappia jatkaaksesi");
+                    Console.ReadKey();
+
+                    valinta();
                 }
 
                 // nopeampi hyökkää ensin //
@@ -213,7 +467,7 @@ namespace ConsoleApp1
                 {
                     if (currentHP <= 0)
                     {
-                        voitto = false;
+                        häviö = true;
                         taistelu = true;
                         valinta();
                     }
@@ -237,10 +491,29 @@ namespace ConsoleApp1
                         Console.WriteLine("Voitto");
                         Console.WriteLine();
 
-                        CheckLevelup(vihollinen.XP);
+                        CheckLevelup(vihollinen.XP, pelaaja);
 
                         Console.WriteLine("Paina mitätahansa nappia jatkaaksesi");
                         Console.ReadKey();
+
+                        hub(pelaaja);
+                    }
+
+                    if (häviö)
+                    {
+                        Console.Clear();
+
+                        Console.WriteLine("Hävisit ja menetit puolet kullastasi");
+                        Console.WriteLine();
+                        Console.WriteLine($"Kulta: {pelaaja.gold} -> {pelaaja.gold / 2}");
+                        Console.WriteLine();
+
+                        pelaaja.gold = pelaaja.gold / 2;
+
+                        Console.WriteLine("Paina mitätahansa nappia jatkaaksesi");
+                        Console.ReadKey();
+
+                        hub(pelaaja);
                     }
                 }
 
@@ -298,7 +571,7 @@ namespace ConsoleApp1
 
             // level up tarkistus ja suoritus //
 
-            public void CheckLevelup(int vihxp)
+            public void CheckLevelup(int vihxp, Pelaaja pelaaja)
             {
                 if (xp + vihxp > xpn[level])
                 {
@@ -310,7 +583,10 @@ namespace ConsoleApp1
                     Console.WriteLine($"Defense: {def} -> {def + 1}");
                     Console.WriteLine($"Speed: {spd} -> {spd + 1}");
                     Console.WriteLine();
+                    Console.WriteLine("Paina mitätahansa nappia jatkaaksesi");
+                    Console.ReadKey();
 
+                    xp += vihxp;
                     xp -= xpn[level];
                     level++;
                     hp += 3;
@@ -323,6 +599,8 @@ namespace ConsoleApp1
                 {
                     Console.WriteLine($"XP: {xp}/{xpn[level]} -> {xp + vihxp}/{xpn[level]}");
                 }
+
+                hub(pelaaja);
             }
         }
 
@@ -461,97 +739,414 @@ namespace ConsoleApp1
         }
 
 
-        public class Esine { }
+        public class Esine
+        {
+            public Slot slot;
+            public virtual void kauppaDesc(bool myy) { }
+            public string nimi;
+            public int hinta;
+            public int myyntihinta;
+        }
 
-        public class Equip : Esine
+        public class Equip : Esine { }
+
+        public class Ase : Equip
         {
             Slot slot;
             Damagetype damagetype;
             protected int str;
-            protected int def;
-            protected int hp;
-            protected string nimi;
 
-            public Equip(Slot slot, Damagetype damagetype, int str, string nimi, int hinta)
+            public override void kauppaDesc(bool myy)
+            {
+                Console.WriteLine(nimi);
+                Console.WriteLine($"Strength: {str}");
+                Console.WriteLine($"Damage type: {damagetype}");
+                Console.WriteLine();
+
+                switch (myy)
+                {
+                    case true:
+                        Console.WriteLine($"Saat: {myyntihinta} kultaa");
+                        break;
+
+                    case false:
+                        Console.WriteLine($"Hinta: {hinta} kultaa");
+                        break;
+
+                }
+            }
+
+            public Ase(Slot slot, Damagetype damagetype, int str, string nimi, int hinta)
             {
                 this.slot = slot;
                 this.damagetype = damagetype;
                 this.str = str;
                 this.nimi = nimi;
+                this.hinta = hinta;
+                this.myyntihinta = Convert.ToInt32(Math.Floor(Convert.ToDouble(hinta) * 0.7));
+            }
+        }
+
+        public class Armor : Equip
+        {
+            Slot slot;
+            protected int def;
+            protected int hp;
+
+            public override void kauppaDesc(bool myy)
+            {
+                Console.WriteLine(nimi);
+                Console.WriteLine($"Defense: {def}");
+                Console.WriteLine($"HP: {hp}");
+                Console.WriteLine();
+
+                switch (myy)
+                {
+                    case true:
+                        Console.WriteLine($"Saat: {myyntihinta} kultaa");
+                        break;
+
+                    case false:
+                        Console.WriteLine($"Hinta: {hinta} kultaa");
+                        break;
+
+                }
             }
 
-            public Equip(int def, int hp, string nimi)
+            public Armor(Slot slot, int def, int hp, string nimi, int hinta)
             {
+                this.slot = slot;
                 this.def = def;
                 this.hp = hp;
                 this.nimi = nimi;
+                this.hinta = hinta;
+                this.myyntihinta = Convert.ToInt32(Math.Floor(Convert.ToDouble(hinta) * 0.7));
             }
         }
 
-        public class Dagger : Equip
+        public class Dagger : Ase
         {
-            public Dagger() : base(Slot.ase, Damagetype.pierce, 0, "Tikari") { }
+            public Dagger() : base(Slot.ase, Damagetype.pierce, 3, "Tikari", 10) { }
         }
 
-        public class Bow : Equip
+        public class Sword : Ase
         {
-            public Bow() : base(Slot.ase, Damagetype.pierce, 6, "Jousipyssy") { }
+            public Sword() : base(Slot.ase, Damagetype.slash, 10, "Miekka", 50) { }
+        }
+
+        public class WarAxe : Ase
+        {
+            public WarAxe() : base(Slot.ase, Damagetype.slash, 25, "Sotakirves", 50) { }
+        }
+
+        public class Morningstar : Ase
+        {
+            public Morningstar() : base(Slot.ase, Damagetype.blunt, 50, "Aamutähti", 200) { }
+        }
+
+        public class Wand : Ase
+        {
+            public Wand() : base(Slot.ase, Damagetype.magic, 70, "Taikasauva", 500) { }
+        }
+
+        public class LeatherCap : Armor
+        {
+            public LeatherCap() : base(Slot.paa, 2, 0, "Nahkalakki", 3) { }
+        }
+
+        public class LeatherVest : Armor
+        {
+            public LeatherVest() : base(Slot.keho, 3, 0, "Nahkaliivi", 5) { }
+        }
+
+        public class LeatherPants : Armor
+        {
+            public LeatherPants() : base(Slot.housut, 3, 0, "Nahkahousut", 5) { }
+        }
+
+        public class ChainMail : Armor
+        {
+            public ChainMail() : base(Slot.keho, 8, 0, "Rengashaarniska", 25) { }
+        }
+
+        public class PlateMail : Armor
+        {
+            public PlateMail() : base(Slot.keho, 25, 0, "Levyhaarniska", 125) { }
+        }
+
+        public class PlateMailL : Armor
+        {
+            public PlateMailL() : base(Slot.housut, 20, 0, "Levyhaarniska (jalat)", 100) { }
         }
 
         public abstract class Consumable : Esine
         {
-            protected string nimi;
-
-            public Consumable(string nimi)
+            public Consumable(string nimi, int hinta)
             {
                 this.nimi = nimi;
+                this.hinta = hinta;
+                this.myyntihinta = Convert.ToInt32(Math.Floor(Convert.ToDouble(hinta) * 0.7));
             }
 
-            public abstract void use(Pelaaja pelaaja, int current, Vihollinen vihollinen, int vihollinenHP);
+            public abstract void use(Pelaaja pelaaja, Vihollinen vihollinen);
         }
 
         public class Potion : Consumable
         {
             int healing = 10;
 
-            public Potion() : base("Parannus juoma") { }
+            public Potion() : base("Parannus juoma", 5) { }
 
-            public override void use(Pelaaja pelaaja, int current, Vihollinen vihollinen, int vihollinenHP)
+            public override void use(Pelaaja pelaaja, Vihollinen vihollinen)
             {
-                if (current + healing <= pelaaja.HP)
+                if (pelaaja.currentHP + healing <= pelaaja.HP)
                 {
-                    current += healing;
+                    pelaaja.currentHP += healing;
+                    Console.WriteLine("1123314131231567778976511");
                 }
 
-                else if (pelaaja.HP - current > 0)
+                else if (pelaaja.HP - pelaaja.currentHP >= 0)
                 {
-                    current += pelaaja.HP - current;
+                    pelaaja.currentHP = pelaaja.HP;
+                    Console.WriteLine("1qwesdaseqweqetyy67778976511");
                 }
-            }          
+            }
+        }
+
+        public class SuperPotion : Consumable
+        {
+            int healing = 25;
+
+            public SuperPotion() : base("Super parannus juoma", 25) { }
+
+            public override void use(Pelaaja pelaaja, Vihollinen vihollinen)
+            {
+                if (pelaaja.currentHP + healing <= pelaaja.HP)
+                {
+                    pelaaja.currentHP += healing;
+                }
+
+                else if (pelaaja.HP - pelaaja.currentHP >= 0)
+                {
+                    pelaaja.currentHP = pelaaja.HP;
+                }
+            }
+        }
+
+        public class DamagePotion : Consumable
+        {
+            int damage = 10;
+
+            public DamagePotion() : base("Taika räjähde", 25) { }
+
+            public override void use(Pelaaja pelaaja, Vihollinen vihollinen)
+            {
+                pelaaja.currentHPV -= damage;
+            }
         }
 
         public class Kauppa
         {
-            public void kauppa(Pelaaja pelaaja)
+            static Esine[] valikoima = new Esine[]
+            {
+                new Dagger(),
+                new Sword(),
+                new WarAxe(),
+                new Morningstar(),
+                new Wand(),
+                new LeatherCap(),
+                new LeatherVest(),
+                new LeatherPants(),
+                new ChainMail(),
+                new PlateMail(),
+                new PlateMailL(),
+                new Potion(),
+                new SuperPotion(),
+                new DamagePotion()
+            };
+
+            public static void kauppa(Pelaaja pelaaja)
             {
                 void valinta()
                 {
+                    Console.Clear();
                     Console.WriteLine("Mitä haluaisit tehdä?");
                     Console.WriteLine();
                     Console.WriteLine("1. Osta");
                     Console.WriteLine("2. Myy");
                     Console.WriteLine("3. Poistu");
 
-                    string valitse = Console.ReadLine();
+                    int input = tarkistaVastaus(1, 3, Console.ReadLine());
 
-                    switch (valitse)
+                    switch (input)
                     {
-                        case "1":
+                        case 1:
+                            osta1();
+                            break;
+
+                        case 2:
+                            myy1();
+                            break;
+
+                        case 3:
+                            Console.Clear();
+                            hub(pelaaja);
                             break;
                     }
                 }
 
+                void myy1()
+                {
+                    Console.Clear();
+                    int z = 1;
 
+                    foreach (Esine x in pelaaja.inventory)
+                    {
+                        Console.WriteLine($"{z}. {x.nimi}");
+                        Console.WriteLine();
+                        z++;
+                    }
+
+                    Console.WriteLine("0. Takaisin               1-9. Esine");
+                    Console.WriteLine();
+                    int input = tarkistaVastaus(0, z, Console.ReadLine());
+
+                    if (input == 0)
+                    {
+                        valinta();
+                    }
+
+                    Console.Clear();
+
+                    pelaaja.inventory[input - 1].kauppaDesc(true);
+
+                    Console.WriteLine();
+                    Console.WriteLine("1. Myy               2. Takaisin");
+
+                    int input2 = tarkistaVastaus(1, 2, Console.ReadLine());
+
+                    switch (input2)
+                    {
+                        case 1:
+                            pelaaja.myy(pelaaja.inventory[input - 1]);
+                            myy1();
+                            break;
+
+                        case 2:
+                            myy1();
+                            break;
+                    }
+                }
+
+                void osta1()
+                {
+                    Console.Clear();
+
+                    Console.WriteLine("1. Aseet");
+                    Console.WriteLine("2. Panssarit ja asusteet");
+                    Console.WriteLine("3. Kertakäyttöesineet ja taikajuomat");
+                    Console.WriteLine("4. Poistu");
+                    Console.WriteLine();
+
+                    int input = tarkistaVastaus(1, 4, Console.ReadLine());
+
+                    switch (input)
+                    {
+                        case 1:
+                            osta2(typeof(Ase));
+                            break;
+
+                        case 2:
+                            osta2(typeof(Armor));
+                            break;
+
+                        case 3:
+                            osta2(typeof(Consumable));
+                            break;
+
+                        case 4:
+                            valinta();
+                            break;
+                    }
+                }
+
+                void osta2(Type type)
+                {
+                    Console.Clear();
+                    int z = 1;
+                    List<int> eh = new List<int>();
+
+                    foreach (Esine x in valikoima)
+                    {
+                        if (x.GetType().IsSubclassOf(type))
+                        {
+                            eh.Add(Array.IndexOf(valikoima, x));
+                            Console.WriteLine($"{z}. {x.nimi}");
+                            Console.WriteLine();
+                            z++;
+                        }
+                    }
+
+                    int y;
+                    Console.WriteLine($"Kulta: {pelaaja.GOLD}");
+                    Console.WriteLine("0. Takaisin               1-9. Esine");
+                    Console.WriteLine();
+
+                    int input = tarkistaVastaus(0, z, Console.ReadLine());
+
+                    if (input == 0)
+                    {
+                        osta1();
+                    }
+
+                    Console.Clear();
+
+                    valikoima[eh[input - 1]].kauppaDesc(false);
+
+                    Console.WriteLine();
+                    Console.WriteLine("1. Osta               2. Takaisin");
+
+                    int input2 = tarkistaVastaus(1, z, Console.ReadLine());
+
+                    switch (input2)
+                    {
+                        case 1:
+                            osta3(valikoima[eh[input - 1]], type);
+                            break;
+
+                        case 2:
+                            osta2(type);
+                            break;
+                    }
+                }
+
+                void osta3(Esine x, Type type)
+                {
+                    Console.Clear();
+                    if (pelaaja.GOLD >= x.hinta)
+                    {
+                        if (pelaaja.checkSpace(pelaaja.inventory, x, pelaaja.INVCAPACITY))
+                        {
+                            pelaaja.GOLD -= x.hinta;
+                        }
+
+                        else
+                        {
+                            Console.WriteLine("Sinulla ei ole tarpeeksi tilaa");
+                            Console.ReadKey();
+                        }
+                    }
+
+                    else
+                    {
+                        Console.WriteLine("Sinulla ei ole tarpeeksi rahaa");
+                        Console.ReadKey();
+                    }
+
+                    osta2(type);
+                }
+
+                valinta();
             }
         }
     }
