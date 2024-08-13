@@ -12,10 +12,10 @@ namespace ConsoleApp1
             Pelaaja pelaaja = new Pelaaja(1, "test");
 
             pelaaja.inventory.Add(new Potion());
+            pelaaja.inventory.Add(new SuperPotion());
             pelaaja.inventory.Add(new Potion());
             pelaaja.inventory.Add(new Potion());
             pelaaja.inventory.Add(new Potion());
-
             hub(pelaaja);
         }
 
@@ -26,7 +26,7 @@ namespace ConsoleApp1
             void hubMain()
             {
                 Console.Clear();
-
+                Console.WriteLine(pelaaja.inventory[1].slot);
                 Console.WriteLine("Mitä haluat tehdä?");
                 Console.WriteLine();
                 Console.WriteLine("1. Taistelu");
@@ -51,6 +51,7 @@ namespace ConsoleApp1
                         break;
 
                     case 4:
+                        equip1();
                         break;
                 }
             }
@@ -118,10 +119,10 @@ namespace ConsoleApp1
             {
                 Console.Clear();
 
-                Console.WriteLine("1. Pää");
-                Console.WriteLine("2. Keho");
-                Console.WriteLine("3. Housut");
-                Console.WriteLine("4. Ase");
+                Console.WriteLine($"1. Pää");
+                Console.WriteLine($"2. Keho");
+                Console.WriteLine($"3. Housut");
+                Console.WriteLine($"4. Ase");
                 Console.WriteLine("5. Takaisin");
 
                 int input = tarkistaVastaus(1, 5, Console.ReadLine());
@@ -129,30 +130,71 @@ namespace ConsoleApp1
                 switch (input)
                 {
                     case 1:
+                        equip2(Slot.paa, 0);
                         break;
 
                     case 2:
+                        equip2(Slot.keho, 1);
                         break;
 
                     case 3:
+                        equip2(Slot.housut, 2);
                         break;
 
                     case 4:
+                        equip2(Slot.ase, 3);
                         break;
 
                     case 5:
+                        hubMain();
                         break;
                 }
             }
 
-            void equip2(Slot slot)
+            void equip2(Slot slot, int equipSlot)
             {
-                foreach (Esine l9 in pelaaja.inventory)
-                {
-                    if (l9.slot == slot)
-                    {
+                Console.Clear();
 
+                int list = 0;
+                List<int> slotIndex = new List<int>();
+
+                foreach (var l9 in pelaaja.inventory)
+                {
+                    if (l9.slot == slot && l9 is not Consumable)
+                    {
+                        list++;
+                        Console.WriteLine($"{list}. {l9.nimi}");
+                        slotIndex.Add(pelaaja.inventory.IndexOf(l9));                        
                     }
+                }
+
+                string print = $"1-{list-1}. Esine      0. Takaisin";
+
+                if (list == 1)
+                {
+                    print = "1. Esine      0. Takaisin";
+                }
+
+                else if (list == 0)
+                {
+                    print = "Ei yhtään vastaavaa esinettä      0. Takaisin";
+                }
+
+                Console.WriteLine();
+                Console.WriteLine(print);
+                Console.WriteLine();
+
+                int input = tarkistaVastaus(0, list, Console.ReadLine());
+
+                if (input == 0)
+                {
+                    equip1();
+                }
+
+                else
+                {
+                    pelaaja.loadout[equipSlot] = pelaaja.inventory[slotIndex[input - 1]];
+                    equip1();
                 }
             }
         }
@@ -191,7 +233,7 @@ namespace ConsoleApp1
             protected int spd = 10;
             protected int level = 1;
             protected int xp = 6;
-            protected int gold = 3;
+            protected int gold = 100000;
             protected string nimi;
             protected int invcapacity = 20;
             public int currentHP;
@@ -205,7 +247,7 @@ namespace ConsoleApp1
                 Slot.housut,
                 Slot.ase
             };
-            Equip[] loadout = new Equip[slots.Length];
+            public Esine[] loadout = new Equip[slots.Length];
             public List<Esine> inventory = new List<Esine>();
 
             public bool checkSpace(List<Esine> inv, Esine x, int capacity)
@@ -558,12 +600,22 @@ namespace ConsoleApp1
 
                 void Hyökkäys()
                 {
+                    
+
                     currentHPV -= str;
                 }
 
                 void VHyökkäys()
                 {
                     currentHP -= vihollinen.STR;
+                }
+
+                void heikkous()
+                {
+                    switch (pelaaja)
+                    {
+
+                    }
                 }
 
                 valinta();
@@ -586,7 +638,6 @@ namespace ConsoleApp1
                     Console.WriteLine("Paina mitätahansa nappia jatkaaksesi");
                     Console.ReadKey();
 
-                    xp += vihxp;
                     xp -= xpn[level];
                     level++;
                     hp += 3;
@@ -599,6 +650,8 @@ namespace ConsoleApp1
                 {
                     Console.WriteLine($"XP: {xp}/{xpn[level]} -> {xp + vihxp}/{xpn[level]}");
                 }
+
+                xp += vihxp;
 
                 hub(pelaaja);
             }
@@ -663,7 +716,7 @@ namespace ConsoleApp1
             public string[] DESC
             {
                 get { return desc; }
-                set {  desc = value; }
+                set { desc = value; }
             }
 
             public Vihollinen(int hp, int str, int def, int spd, int xp, string nimi, int goldmin, int goldmax, Damagetype heikkous, Damagetype kestää)
@@ -678,6 +731,10 @@ namespace ConsoleApp1
                 this.heikkous = heikkous;
                 this.kestää = kestää;
             }
+
+            public abstract void abilityHit(Pelaaja pelaaja, Damagetype pelaajaDamagetype);
+            public abstract void abilityAttack(Pelaaja pelaaja);
+            public abstract void abilityPassive(Pelaaja pelaaja);
         }
 
         // eri vihollis tyyppejä //
@@ -694,6 +751,17 @@ namespace ConsoleApp1
                     $"Kestää: {kestää}"
                 };
             }
+
+            public override void abilityHit(Pelaaja pelaaja, Damagetype pelaajaDamagetype)
+            {
+                if (pelaajaDamagetype is not Damagetype.magic)
+                {
+                    pelaaja.SPD -= 2;
+                }
+            }
+
+            public override void abilityAttack(Pelaaja pelaaja) { }
+            public override void abilityPassive(Pelaaja pelaaja) { }
         }
 
         public class Peikko : Vihollinen
@@ -752,7 +820,6 @@ namespace ConsoleApp1
 
         public class Ase : Equip
         {
-            Slot slot;
             Damagetype damagetype;
             protected int str;
 
@@ -881,8 +948,9 @@ namespace ConsoleApp1
 
         public abstract class Consumable : Esine
         {
-            public Consumable(string nimi, int hinta)
+            public Consumable(Slot slot, string nimi, int hinta)
             {
+                this.slot = slot;
                 this.nimi = nimi;
                 this.hinta = hinta;
                 this.myyntihinta = Convert.ToInt32(Math.Floor(Convert.ToDouble(hinta) * 0.7));
@@ -895,7 +963,7 @@ namespace ConsoleApp1
         {
             int healing = 10;
 
-            public Potion() : base("Parannus juoma", 5) { }
+            public Potion() : base(Slot.housut, "Parannus juoma", 5) { }
 
             public override void use(Pelaaja pelaaja, Vihollinen vihollinen)
             {
@@ -917,7 +985,7 @@ namespace ConsoleApp1
         {
             int healing = 25;
 
-            public SuperPotion() : base("Super parannus juoma", 25) { }
+            public SuperPotion() : base(Slot.consumable, "Super parannus juoma", 25) { }
 
             public override void use(Pelaaja pelaaja, Vihollinen vihollinen)
             {
@@ -937,7 +1005,7 @@ namespace ConsoleApp1
         {
             int damage = 10;
 
-            public DamagePotion() : base("Taika räjähde", 25) { }
+            public DamagePotion() : base(Slot.consumable, "Taika räjähde", 25) { }
 
             public override void use(Pelaaja pelaaja, Vihollinen vihollinen)
             {
