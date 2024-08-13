@@ -160,7 +160,7 @@ namespace ConsoleApp1
 
                 foreach (var l9 in pelaaja.inventory)
                 {
-                    if (l9.slot == slot && l9 is not Consumable)
+                    if (l9.slot == slot) // && l9 is not Consumable
                     {
                         list++;
                         Console.WriteLine($"{list}. {l9.nimi}");
@@ -351,6 +351,7 @@ namespace ConsoleApp1
                 bool häviö = false;
                 bool taistelu = false;
                 int turn = 1;
+                vihollinen.abilityPassive(pelaaja);
 
                 // valitset mitä teet //
                 void valinta()
@@ -607,6 +608,7 @@ namespace ConsoleApp1
 
                 void VHyökkäys()
                 {
+                    vihollinen.abilityAttack(pelaaja);
                     currentHP -= vihollinen.STR;
                 }
 
@@ -745,7 +747,7 @@ namespace ConsoleApp1
             {
                 desc = new string[]
                 {
-                    "Placeholder",
+                    "Liman lyöminen hidastaa sinua",
                     "",
                     $"Heikkous: {heikkous}",
                     $"Kestää: {kestää}"
@@ -770,12 +772,20 @@ namespace ConsoleApp1
             {
                 string[] desc = new string[]
                 {
-                    "Placeholder",
+                    "Peikon aura saa sinut tärisemään, heikentäen hyökkäyksiäsi",
                     "",
                     $"Heikkous: {heikkous}",
                     $"Kestää: {kestää}"
                 };
             }
+
+            public override void abilityHit(Pelaaja pelaaja, Damagetype pelaajaDamagetype) { }
+            public override void abilityAttack(Pelaaja pelaaja) { }
+            public override void abilityPassive(Pelaaja pelaaja)
+            {
+                pelaaja.STR -= 3;
+            }
+
         }
 
         public class Rosvo : Vihollinen
@@ -784,12 +794,30 @@ namespace ConsoleApp1
             {
                 string[] desc = new string[]
                 {
-                    "Placeholder",
+                    "Sinuun hyökätessä rosvo varastaa hieman kultaa",
                     "",
                     $"Heikkous: {heikkous}",
                     $"Kestää: {kestää}"
                 };
             }
+
+            public override void abilityHit(Pelaaja pelaaja, Damagetype pelaajaDamagetype) { }
+            public override void abilityAttack(Pelaaja pelaaja)
+            {
+                Console.Clear();
+
+                var rand = new Random();
+
+                int lost = pelaaja.GOLD / 100 * rand.Next(3);
+                pelaaja.GOLD -= lost;
+
+                Console.WriteLine($"Rosvo varasti {lost} kultaa");
+                Console.WriteLine($"Kulta:{pelaaja.GOLD + lost} -> {pelaaja.GOLD}");
+                Console.WriteLine();
+                Console.WriteLine("Paina mitätahansa nappia jatkaaksesi");
+                Console.ReadKey();
+            }
+            public override void abilityPassive(Pelaaja pelaaja) { }
         }
 
         public class Lohikäärme : Vihollinen
@@ -804,6 +832,10 @@ namespace ConsoleApp1
                     $"Kestää: {kestää}"
                 };
             }
+
+            public override void abilityHit(Pelaaja pelaaja, Damagetype pelaajaDamagetype) { }
+            public override void abilityAttack(Pelaaja pelaaja) { }
+            public override void abilityPassive(Pelaaja pelaaja) { }
         }
 
 
@@ -963,7 +995,7 @@ namespace ConsoleApp1
         {
             int healing = 10;
 
-            public Potion() : base(Slot.housut, "Parannus juoma", 5) { }
+            public Potion() : base(Slot.consumable, "Parannus juoma", 5) { }
 
             public override void use(Pelaaja pelaaja, Vihollinen vihollinen)
             {
