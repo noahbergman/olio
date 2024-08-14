@@ -888,7 +888,6 @@ namespace ConsoleApp1
 
         public class Armor : Equip
         {
-            Slot slot;
             protected int def;
             protected int hp;
 
@@ -1206,7 +1205,7 @@ namespace ConsoleApp1
                     Console.WriteLine();
                     Console.WriteLine("1. Osta               2. Takaisin");
 
-                    int input2 = tarkistaVastaus(1, z, Console.ReadLine());
+                    int input2 = tarkistaVastaus(1, 2, Console.ReadLine());
 
                     switch (input2)
                     {
