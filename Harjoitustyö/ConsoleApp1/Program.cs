@@ -166,11 +166,11 @@ namespace ConsoleApp1
                     {
                         list++;
                         Console.WriteLine($"{list}. {l9.nimi}");
-                        slotIndex.Add(pelaaja.inventory.IndexOf(l9));                        
+                        slotIndex.Add(pelaaja.inventory.IndexOf(l9));
                     }
                 }
 
-                string print = $"1-{list-1}. Esine      0. Takaisin";
+                string print = $"1-{list - 1}. Esine      0. Takaisin";
 
                 if (list == 1)
                 {
@@ -198,6 +198,8 @@ namespace ConsoleApp1
                     pelaaja.loadout[equipSlot] = pelaaja.inventory[slotIndex[input - 1]];
                     equip1();
                 }
+
+                pelaaja.setStats(pelaaja);
             }
         }
 
@@ -256,8 +258,14 @@ namespace ConsoleApp1
             public void setStats(Pelaaja pelaaja)
             {
                 pelaaja.hp = baseHP;
-                pelaaja.str = baseSTR + pelaaja.loadout[3].str;
-                pelaaja.def = baseDEF + pelaaja.loadout[0].def + pelaaja.loadout[1].def + pelaaja.loadout[2].def;
+                pelaaja.str = baseSTR;
+                pelaaja.def = baseDEF;
+
+                foreach (var var in pelaaja.inventory)
+                {
+                    pelaaja.def += var.def;
+                    pelaaja.str += var.str;
+                }
             }
 
             Random random = new Random();
