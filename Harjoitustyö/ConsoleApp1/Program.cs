@@ -10,6 +10,7 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             Pelaaja pelaaja = new Pelaaja(1, "test");
+            pelaaja.setBase();
 
             pelaaja.inventory.Add(new Potion());
             pelaaja.inventory.Add(new SuperPotion());
@@ -21,6 +22,7 @@ namespace ConsoleApp1
 
         static public void hub(Pelaaja pelaaja)
         {
+            pelaaja.setStats(pelaaja);
             hubMain();
 
             void hubMain()
@@ -160,7 +162,7 @@ namespace ConsoleApp1
 
                 foreach (var l9 in pelaaja.inventory)
                 {
-                    if (l9.slot == slot) // && l9 is not Consumable
+                    if (l9.slot == slot)
                     {
                         list++;
                         Console.WriteLine($"{list}. {l9.nimi}");
@@ -223,7 +225,6 @@ namespace ConsoleApp1
         }
 
         public enum Slot { paa, keho, housut, ase, consumable }
-        public enum Damagetype { blunt, slash, pierce, magic , na }
 
         public class Pelaaja
         {
@@ -238,6 +239,27 @@ namespace ConsoleApp1
             protected int invcapacity = 20;
             public int currentHP;
             public int currentHPV;
+
+            int baseHP;
+            int baseSTR;
+            int baseDEF;
+            int baseSPD;
+
+            public void setBase()
+            {
+                baseHP = hp;
+                baseSTR = str;
+                baseDEF = def;
+                baseSPD = spd;
+            }
+
+            public void setStats(Pelaaja pelaaja)
+            {
+                pelaaja.hp = baseHP;
+                pelaaja.str = baseSTR + pelaaja.loadout[3].str;
+                pelaaja.def = baseDEF + pelaaja.loadout[0].def + pelaaja.loadout[1].def + pelaaja.loadout[2].def;
+            }
+
             Random random = new Random();
 
             static Slot[] slots = new Slot[]
@@ -247,7 +269,8 @@ namespace ConsoleApp1
                 Slot.housut,
                 Slot.ase
             };
-            public Esine[] loadout = new Equip[slots.Length];
+            public Esine[] loadout = new Esine[slots.Length];
+            public Ase equippedAse;
             public List<Esine> inventory = new List<Esine>();
 
             public bool checkSpace(List<Esine> inv, Esine x, int capacity)
@@ -601,8 +624,6 @@ namespace ConsoleApp1
 
                 void Hyökkäys()
                 {
-                    
-
                     currentHPV -= str;
                 }
 
@@ -610,14 +631,6 @@ namespace ConsoleApp1
                 {
                     vihollinen.abilityAttack(pelaaja);
                     currentHP -= vihollinen.STR;
-                }
-
-                void heikkous()
-                {
-                    switch (pelaaja)
-                    {
-
-                    }
                 }
 
                 valinta();
@@ -642,10 +655,10 @@ namespace ConsoleApp1
 
                     xp -= xpn[level];
                     level++;
-                    hp += 3;
-                    str += 2;
-                    def += 1;
-                    spd += 1;
+                    baseHP += 3;
+                    baseSTR += 2;
+                    baseDEF += 1;
+                    baseSPD += 1;
                 }
 
                 else
@@ -669,8 +682,6 @@ namespace ConsoleApp1
             protected int xp;
             protected int gold;
             protected string nimi;
-            protected Damagetype heikkous;
-            protected Damagetype kestää;
             Random random = new Random();
             protected internal string[] desc = new string[4];
 
@@ -721,7 +732,7 @@ namespace ConsoleApp1
                 set { desc = value; }
             }
 
-            public Vihollinen(int hp, int str, int def, int spd, int xp, string nimi, int goldmin, int goldmax, Damagetype heikkous, Damagetype kestää)
+            public Vihollinen(int hp, int str, int def, int spd, int xp, string nimi, int goldmin, int goldmax)
             {
                 this.hp = hp;
                 this.str = str;
@@ -730,11 +741,9 @@ namespace ConsoleApp1
                 this.xp = xp;
                 this.nimi = nimi;
                 this.gold = random.Next(goldmin, goldmax + 1);
-                this.heikkous = heikkous;
-                this.kestää = kestää;
             }
 
-            public abstract void abilityHit(Pelaaja pelaaja, Damagetype pelaajaDamagetype);
+            public abstract void abilityHit(Pelaaja pelaaja);
             public abstract void abilityAttack(Pelaaja pelaaja);
             public abstract void abilityPassive(Pelaaja pelaaja);
         }
@@ -743,23 +752,17 @@ namespace ConsoleApp1
 
         public class Lima : Vihollinen
         {
-            public Lima() : base(10, 2, 0, 4, 5, "Lima", 10, 20, Damagetype.slash, Damagetype.blunt)
+            public Lima() : base(10, 2, 0, 4, 5, "Lima", 10, 20)
             {
                 desc = new string[]
                 {
-                    "Liman lyöminen hidastaa sinua",
-                    "",
-                    $"Heikkous: {heikkous}",
-                    $"Kestää: {kestää}"
+                    "Liman lyöminen hidastaa sinua"
                 };
             }
 
-            public override void abilityHit(Pelaaja pelaaja, Damagetype pelaajaDamagetype)
+            public override void abilityHit(Pelaaja pelaaja)
             {
-                if (pelaajaDamagetype is not Damagetype.magic)
-                {
-                    pelaaja.SPD -= 2;
-                }
+                pelaaja.SPD -= 2;
             }
 
             public override void abilityAttack(Pelaaja pelaaja) { }
@@ -768,18 +771,15 @@ namespace ConsoleApp1
 
         public class Peikko : Vihollinen
         {
-            public Peikko() : base(15, 4, 2, 7, 15, "Peikko", 15, 30, Damagetype.na, Damagetype.na)
+            public Peikko() : base(15, 4, 2, 7, 15, "Peikko", 15, 30)
             {
                 string[] desc = new string[]
                 {
-                    "Peikon aura saa sinut tärisemään, heikentäen hyökkäyksiäsi",
-                    "",
-                    $"Heikkous: {heikkous}",
-                    $"Kestää: {kestää}"
+                    "Peikon aura saa sinut tärisemään, heikentäen hyökkäyksiäsi"
                 };
             }
 
-            public override void abilityHit(Pelaaja pelaaja, Damagetype pelaajaDamagetype) { }
+            public override void abilityHit(Pelaaja pelaaja) { }
             public override void abilityAttack(Pelaaja pelaaja) { }
             public override void abilityPassive(Pelaaja pelaaja)
             {
@@ -790,18 +790,15 @@ namespace ConsoleApp1
 
         public class Rosvo : Vihollinen
         {
-            public Rosvo() : base(20, 8, 5, 25, 40, "Rosvo", 100, 150, Damagetype.na, Damagetype.na)
+            public Rosvo() : base(20, 8, 5, 25, 40, "Rosvo", 100, 150)
             {
                 string[] desc = new string[]
                 {
-                    "Sinuun hyökätessä rosvo varastaa hieman kultaa",
-                    "",
-                    $"Heikkous: {heikkous}",
-                    $"Kestää: {kestää}"
+                    "Sinuun hyökätessä rosvo varastaa hieman kultaa"
                 };
             }
 
-            public override void abilityHit(Pelaaja pelaaja, Damagetype pelaajaDamagetype) { }
+            public override void abilityHit(Pelaaja pelaaja) { }
             public override void abilityAttack(Pelaaja pelaaja)
             {
                 Console.Clear();
@@ -822,18 +819,15 @@ namespace ConsoleApp1
 
         public class Lohikäärme : Vihollinen
         {
-            public Lohikäärme() : base(100, 40, 30, 70, 1000, "Lohikäärme", 2000, 4000, Damagetype.na, Damagetype.na)
+            public Lohikäärme() : base(100, 40, 30, 70, 1000, "Lohikäärme", 2000, 4000)
             {
                 string[] desc = new string[]
                 {
-                    "Placeholder",
-                    "",
-                    $"Heikkous: {heikkous}",
-                    $"Kestää: {kestää}"
+                    "Placeholder"
                 };
             }
 
-            public override void abilityHit(Pelaaja pelaaja, Damagetype pelaajaDamagetype) { }
+            public override void abilityHit(Pelaaja pelaaja) { }
             public override void abilityAttack(Pelaaja pelaaja) { }
             public override void abilityPassive(Pelaaja pelaaja) { }
         }
@@ -842,6 +836,9 @@ namespace ConsoleApp1
         public class Esine
         {
             public Slot slot;
+            public int str;
+            public int hp;
+            public int def;
             public virtual void kauppaDesc(bool myy) { }
             public string nimi;
             public int hinta;
@@ -852,14 +849,11 @@ namespace ConsoleApp1
 
         public class Ase : Equip
         {
-            Damagetype damagetype;
-            protected int str;
 
             public override void kauppaDesc(bool myy)
             {
                 Console.WriteLine(nimi);
                 Console.WriteLine($"Strength: {str}");
-                Console.WriteLine($"Damage type: {damagetype}");
                 Console.WriteLine();
 
                 switch (myy)
@@ -875,10 +869,9 @@ namespace ConsoleApp1
                 }
             }
 
-            public Ase(Slot slot, Damagetype damagetype, int str, string nimi, int hinta)
+            public Ase(Slot slot, int str, string nimi, int hinta)
             {
                 this.slot = slot;
-                this.damagetype = damagetype;
                 this.str = str;
                 this.nimi = nimi;
                 this.hinta = hinta;
@@ -924,27 +917,27 @@ namespace ConsoleApp1
 
         public class Dagger : Ase
         {
-            public Dagger() : base(Slot.ase, Damagetype.pierce, 3, "Tikari", 10) { }
+            public Dagger() : base(Slot.ase, 3, "Tikari", 10) { }
         }
 
         public class Sword : Ase
         {
-            public Sword() : base(Slot.ase, Damagetype.slash, 10, "Miekka", 50) { }
+            public Sword() : base(Slot.ase, 10, "Miekka", 50) { }
         }
 
         public class WarAxe : Ase
         {
-            public WarAxe() : base(Slot.ase, Damagetype.slash, 25, "Sotakirves", 50) { }
+            public WarAxe() : base(Slot.ase, 25, "Sotakirves", 50) { }
         }
 
         public class Morningstar : Ase
         {
-            public Morningstar() : base(Slot.ase, Damagetype.blunt, 50, "Aamutähti", 200) { }
+            public Morningstar() : base(Slot.ase, 50, "Aamutähti", 200) { }
         }
 
         public class Wand : Ase
         {
-            public Wand() : base(Slot.ase, Damagetype.magic, 70, "Taikasauva", 500) { }
+            public Wand() : base(Slot.ase, 70, "Taikasauva", 500) { }
         }
 
         public class LeatherCap : Armor

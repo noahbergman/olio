@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "0dd0+U1LB2U0zcIk2P3056z9dncp/wzUZd/JIQj4P2XdtjMzaEtVEI4UM7kWTYzPWQh/SfKS7SRI0aaVgZHosQ==",
+  "dgSpecHash": "FbShlsA5X3uvV2q9h82MJNYy4f2fsUqhTgX8JI5aw1bU9iToIvoAtpbQ+k8/xlx9MdYyDzrME1lMtynJqm6jmA==",
   "success": true,
-  "projectFilePath": "D:\\Unity\\Unity Hub\\olio\\Harjoitustyö\\ConsoleApp1\\ConsoleApp1.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Koulu\\Github\\C#\\Olio\\olio\\Harjoitustyö\\ConsoleApp1\\ConsoleApp1.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.29\\microsoft.netcore.app.host.win-x64.6.0.29.nupkg.sha512",
+    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.29\\microsoft.aspnetcore.app.ref.6.0.29.nupkg.sha512",
+    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.29\\microsoft.windowsdesktop.app.ref.6.0.29.nupkg.sha512",
+    "C:\\Users\\s2100947\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.29\\microsoft.netcore.app.ref.6.0.29.nupkg.sha512"
+  ],
   "logs": []
 }
