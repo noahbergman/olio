@@ -636,7 +636,7 @@ namespace ConsoleApp1
                 void VHyökkäys()
                 {
                     vihollinen.abilityAttack(pelaaja);
-                    currentHP -= vihollinen.STR;
+                    currentHP -= vihollinen.STR / 100 * 2 * pelaaja.def;
                 }
 
                 valinta();
@@ -646,6 +646,8 @@ namespace ConsoleApp1
 
             public void CheckLevelup(int vihxp, Pelaaja pelaaja)
             {
+                Console.Clear();
+
                 if (xp + vihxp > xpn[level])
                 {
                     Console.WriteLine($"Level up: {level} -> {level + 1}");
@@ -673,6 +675,11 @@ namespace ConsoleApp1
                 }
 
                 xp += vihxp;
+
+                if (xp > xpn[level])
+                {
+                    CheckLevelup(0, pelaaja);
+                }
 
                 hub(pelaaja);
             }
