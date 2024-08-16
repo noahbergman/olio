@@ -28,7 +28,6 @@ namespace ConsoleApp1
             void hubMain()
             {
                 Console.Clear();
-                Console.WriteLine(pelaaja.inventory[1].slot);
                 Console.WriteLine("Mitä haluat tehdä?");
                 Console.WriteLine();
                 Console.WriteLine("1. Taistelu");
@@ -196,10 +195,9 @@ namespace ConsoleApp1
                 else
                 {
                     pelaaja.loadout[equipSlot] = pelaaja.inventory[slotIndex[input - 1]];
+                    pelaaja.setStats(pelaaja);
                     equip1();
-                }
-
-                pelaaja.setStats(pelaaja);
+                }                
             }
         }
 
@@ -889,8 +887,6 @@ namespace ConsoleApp1
 
         public class Armor : Equip
         {
-            protected int def;
-            protected int hp;
 
             public override void kauppaDesc(bool myy)
             {
